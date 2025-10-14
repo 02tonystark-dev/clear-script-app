@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: pharmacare
+      POSTGRES_USER: pharmacare
+      POSTGRES_PASSWORD: pharmacare123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pharmacare"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://pharmacare:pharmacare123@postgres:5432/pharmacare
+      JWT_SECRET: change-this-secret-in-production
+      PORT: 5000
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_URL: http://localhost:5000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
