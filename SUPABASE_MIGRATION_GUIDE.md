@@ -60,9 +60,23 @@ INSERT INTO public.user_roles (user_id, role)
 VALUES ('YOUR_USER_ID', 'admin');
 ```
 
-### Step 7: Add Seed Data (Optional)
+### Step 7: Import Existing Data
 
-Run the SQL from `SUPABASE_SEED.sql` to add initial medicine categories.
+1. Go back to **SQL Editor**
+2. Click **New Query**
+3. Copy and paste the entire content from `SUPABASE_DATA_EXPORT.sql`
+4. Click **Run**
+5. You should see a success message with counts of imported data
+
+**What gets imported:**
+- 8 Medicine Categories
+- 5 Existing Medicines with stock levels
+- Sales history (optional - see note in SQL file)
+
+**Note on Sales Data:**
+- Sales records contain references to user IDs (sold_by field)
+- These will only import correctly if you manually create matching users
+- For a fresh start, you can skip sales import and create new sales going forward
 
 ### Step 8: Get Your Supabase Credentials
 
